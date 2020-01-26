@@ -1,5 +1,8 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
+[RequireComponent(typeof(Spawner))]
+[RequireComponent(typeof(Controllers))]
 public class TetrisGrid : MonoBehaviour
 {
     public float timeBetweenFall = 1.0f;
@@ -7,15 +10,24 @@ public class TetrisGrid : MonoBehaviour
     private float _delayBeforeFall;
     private Tetromino _currentTetromino;
     private GridCell[,] _gridCells;
-    
+
     private Spawner _spawner;
+    private Controllers _controllers;
 
     private static readonly Vector2Int GridSize = new Vector2Int(10, 40);
+
+    private static readonly Dictionary<PlayerInput, Vector3> InputsToMove = new Dictionary<PlayerInput, Vector3>
+    {
+        {PlayerInput.Down, Vector2.down},
+        {PlayerInput.Left, Vector2.left},
+        {PlayerInput.Right, Vector2.right}
+    };
 
     private void Start()
     {
         _spawner = GetComponent<Spawner>();
-        
+        _controllers = GetComponent<Controllers>();
+
         _delayBeforeFall = timeBetweenFall;
         InitGridCells();
 
@@ -37,17 +49,8 @@ public class TetrisGrid : MonoBehaviour
     private void Update()
     {
         UpdateTetrominoFreeze();
+        UpdateTetrominoControl();
         UpdateTetrominoFall();
-    }
-
-    private void UpdateTetrominoFall()
-    {
-        _delayBeforeFall -= Time.deltaTime;
-        if (_delayBeforeFall <= 0.0f)
-        {
-            MoveDown();
-            _delayBeforeFall = timeBetweenFall;
-        }
     }
 
     private void UpdateTetrominoFreeze()
@@ -59,7 +62,30 @@ public class TetrisGrid : MonoBehaviour
         }
     }
 
-    private void MoveDown()
+    private void UpdateTetrominoControl()
+    {
+        var playerInputs = _controllers.GetInputs();
+        foreach (var playerInput in playerInputs)
+        {
+            if (InputsToMove.ContainsKey(playerInput))
+            {
+                Debug.Log(playerInput);
+                _currentTetromino.transform.position += InputsToMove[playerInput];
+            }
+        }
+    }
+
+    private void UpdateTetrominoFall()
+    {
+        _delayBeforeFall -= Time.deltaTime;
+        if (_delayBeforeFall <= 0.0f)
+        {
+            Fall();
+            _delayBeforeFall += timeBetweenFall;
+        }
+    }
+
+    private void Fall()
     {
         _currentTetromino.transform.position += Vector3.down;
     }
