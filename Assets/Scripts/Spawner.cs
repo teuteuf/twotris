@@ -8,7 +8,7 @@ public class Spawner : MonoBehaviour
     
     public Tetromino Spawn()
     {
-        var tetromino = Instantiate(PickRandomTetromino());
+        var tetromino = Instantiate(PickRandomTetromino(), transform);
         tetromino.transform.position = DefaultSpawnPosition;
         
         return tetromino;
