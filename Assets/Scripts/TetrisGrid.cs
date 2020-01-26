@@ -36,8 +36,13 @@ public class TetrisGrid : MonoBehaviour
 
     private void Update()
     {
+        UpdateTetrominoFreeze();
+        UpdateTetrominoFall();
+    }
+
+    private void UpdateTetrominoFall()
+    {
         _delayBeforeFall -= Time.deltaTime;
-        
         if (_delayBeforeFall <= 0.0f)
         {
             MoveDown();
@@ -45,15 +50,18 @@ public class TetrisGrid : MonoBehaviour
         }
     }
 
-    private void MoveDown()
+    private void UpdateTetrominoFreeze()
     {
-        _currentTetromino.transform.position += Vector3.down;
-        
         if (ShouldFreezeCurrentTetromino())
         {
             FreezeCurrentTetromino();
             SpawnTetromino();
         }
+    }
+
+    private void MoveDown()
+    {
+        _currentTetromino.transform.position += Vector3.down;
     }
 
     private void SpawnTetromino()
