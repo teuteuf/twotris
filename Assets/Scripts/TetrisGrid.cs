@@ -6,7 +6,7 @@ public class TetrisGrid : MonoBehaviour
 
     private float _delayBeforeFall;
     private Tetromino _currentTetromino;
-    private Block[,] _blocks;
+    private GridCell[,] _gridCells;
     
     private Spawner _spawner;
 
@@ -17,9 +17,21 @@ public class TetrisGrid : MonoBehaviour
         _spawner = GetComponent<Spawner>();
         
         _delayBeforeFall = timeBetweenFall;
-        _blocks = new Block[GridSize.x, GridSize.y];
-        
+        InitGridCells();
+
         SpawnTetromino();
+    }
+
+    private void InitGridCells()
+    {
+        _gridCells = new GridCell[GridSize.x, GridSize.y];
+        for (var i = 0; i < _gridCells.GetLength(0); i++)
+        {
+            for (var j = 0; j < _gridCells.GetLength(1); j++)
+            {
+                _gridCells[i, j] = new GridCell();
+            }
+        }
     }
 
     private void Update()
@@ -59,7 +71,7 @@ public class TetrisGrid : MonoBehaviour
                 return true;
             }
 
-            if (_blocks[blockPosition.x, blockPosition.y - 1] != null)
+            if (_gridCells[blockPosition.x, blockPosition.y - 1].Filled)
             {
                 return true;
             }
@@ -83,7 +95,7 @@ public class TetrisGrid : MonoBehaviour
             
             blockTransform.SetParent(transform);
 
-            _blocks[blockPosition.x, blockPosition.y] = block;
+            _gridCells[blockPosition.x, blockPosition.y].Fill(block);
         }
     }
 }
