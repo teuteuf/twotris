@@ -1,19 +1,23 @@
 ﻿using UnityEngine;
 
-public class Grid : MonoBehaviour
+public class TetrisGrid : MonoBehaviour
 {
     public float timeBetweenFall = 1.0f;
 
     private float _delayBeforeFall;
     private Tetromino _currentTetromino;
+    private Block[,] _blocks;
     
     private Spawner _spawner;
 
+    private static readonly Vector2Int GridSize = new Vector2Int(10, 40);
+
     private void Start()
     {
-        _delayBeforeFall = timeBetweenFall;
-
         _spawner = GetComponent<Spawner>();
+        
+        _delayBeforeFall = timeBetweenFall;
+        _blocks = new Block[GridSize.x, GridSize.y];
         
         SpawnTetromino();
     }
@@ -47,7 +51,21 @@ public class Grid : MonoBehaviour
 
     private bool ShouldFreezeCurrentTetromino()
     {
-        return Mathf.RoundToInt(_currentTetromino.transform.position.y) == 0;
+        foreach (var block in _currentTetromino.GetBlocks())
+        {
+            var blockPosition = Vector2Int.RoundToInt(block.transform.position);
+            if (blockPosition.y == 0)
+            {
+                return true;
+            }
+
+            if (_blocks[blockPosition.x, blockPosition.y - 1] != null)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void FreezeCurrentTetromino()
@@ -60,7 +78,12 @@ public class Grid : MonoBehaviour
     {
         foreach (var block in _currentTetromino.GetBlocks())
         {
-            block.transform.SetParent(transform);
+            var blockTransform = block.transform;
+            var blockPosition = Vector2Int.RoundToInt(blockTransform.position);
+            
+            blockTransform.SetParent(transform);
+
+            _blocks[blockPosition.x, blockPosition.y] = block;
         }
     }
 }
