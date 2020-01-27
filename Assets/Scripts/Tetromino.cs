@@ -32,7 +32,7 @@ public class Tetromino : MonoBehaviour
     {
         foreach (var block in _blocks)
         {
-            var coordinates = Vector2Int.RoundToInt(block.transform.position);
+            var coordinates = Vector2Int.FloorToInt(block.transform.position);
 
             var outOfGridX = coordinates.x < 0 || coordinates.x >= gridCells.GetLength(0);
             var outOfGridY = coordinates.y < 0;

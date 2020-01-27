@@ -109,7 +109,7 @@ public class TetrisGrid : MonoBehaviour
     {
         foreach (var block in _currentTetromino.GetBlocks())
         {
-            var blockPosition = Vector2Int.RoundToInt(block.transform.position);
+            var blockPosition = Vector2Int.FloorToInt(block.transform.position);
             if (blockPosition.y == 0)
             {
                 return true;
@@ -135,7 +135,7 @@ public class TetrisGrid : MonoBehaviour
         foreach (var block in _currentTetromino.GetBlocks())
         {
             var blockTransform = block.transform;
-            var blockPosition = Vector2Int.RoundToInt(blockTransform.position);
+            var blockPosition = Vector2Int.FloorToInt(blockTransform.position);
             
             blockTransform.SetParent(transform);
 
