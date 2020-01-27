@@ -8,7 +8,7 @@ public class Controllers : MonoBehaviour
         var inputs = new List<PlayerInput>();
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            inputs.Add(PlayerInput.Down);
+            inputs.Add(PlayerInput.SoftDrop);
         }
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
@@ -17,6 +17,10 @@ public class Controllers : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             inputs.Add(PlayerInput.Right);
+        }
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            inputs.Add(PlayerInput.Clockwise);
         }
 
         return inputs;

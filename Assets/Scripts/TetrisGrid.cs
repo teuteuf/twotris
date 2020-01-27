@@ -18,9 +18,15 @@ public class TetrisGrid : MonoBehaviour
 
     private static readonly Dictionary<PlayerInput, Vector2Int> InputsToMove = new Dictionary<PlayerInput, Vector2Int>
     {
-        {PlayerInput.Down, Vector2Int.down},
+        {PlayerInput.SoftDrop, Vector2Int.down},
         {PlayerInput.Left, Vector2Int.left},
         {PlayerInput.Right, Vector2Int.right}
+    };
+    
+    private static readonly Dictionary<PlayerInput, float> InputsToRotate = new Dictionary<PlayerInput, float>
+    {
+        {PlayerInput.Clockwise, 90.0f},
+        {PlayerInput.Counterclockwise, -90.0f}
     };
 
     private void Start()
@@ -70,6 +76,11 @@ public class TetrisGrid : MonoBehaviour
             if (InputsToMove.ContainsKey(playerInput))
             {
                 _currentTetromino.Move(InputsToMove[playerInput], _gridCells);
+            }
+            
+            if (InputsToRotate.ContainsKey(playerInput))
+            {
+                _currentTetromino.Rotate(InputsToRotate[playerInput], _gridCells);
             }
         }
     }

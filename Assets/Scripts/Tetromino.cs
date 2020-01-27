@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class Tetromino : MonoBehaviour
 {
+    public Transform rotationCenter;
+    
     private Block[] _blocks;
 
     private void Start()
@@ -46,5 +48,10 @@ public class Tetromino : MonoBehaviour
         }
 
         return true;
+    }
+
+    public void Rotate(float rotationDegree, GridCell[,] gridCells)
+    {
+        transform.RotateAround(rotationCenter.transform.position, Vector3.forward, rotationDegree);
     }
 }

@@ -1,4 +1,4 @@
 public enum PlayerInput
 { 
-    Down, Left, Right, HardDrop, Hold
+    SoftDrop, Left, Right, Clockwise, Counterclockwise, HardDrop, Hold
 }
