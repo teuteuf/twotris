@@ -69,7 +69,6 @@ public class TetrisGrid : MonoBehaviour
         {
             if (InputsToMove.ContainsKey(playerInput))
             {
-                Debug.Log(playerInput);
                 _currentTetromino.transform.position += InputsToMove[playerInput];
             }
         }

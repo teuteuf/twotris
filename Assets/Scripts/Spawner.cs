@@ -2,7 +2,7 @@
 
 public class Spawner : MonoBehaviour
 {
-    private static readonly Vector3 DefaultSpawnPosition = new Vector3(4, 20);
+    private static readonly Vector3 DefaultSpawnPosition = new Vector3(3, 20);
 
     public Tetromino[] tetrominoesPrefabs;
     
