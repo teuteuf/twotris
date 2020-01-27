@@ -69,7 +69,7 @@ public class TetrisGrid : MonoBehaviour
         {
             if (InputsToMove.ContainsKey(playerInput))
             {
-                _currentTetromino.Move(InputsToMove[playerInput]);
+                _currentTetromino.Move(InputsToMove[playerInput], _gridCells);
             }
         }
     }
@@ -86,7 +86,7 @@ public class TetrisGrid : MonoBehaviour
 
     private void Fall()
     {
-        _currentTetromino.Move(Vector2Int.down);
+        _currentTetromino.Move(Vector2Int.down, _gridCells);
     }
 
     private void SpawnTetromino()

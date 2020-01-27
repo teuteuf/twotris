@@ -15,8 +15,36 @@ public class Tetromino : MonoBehaviour
         return _blocks;
     }
 
-    public void Move(Vector2Int move)
+    public void Move(Vector2Int move, GridCell[,] gridCells)
     {
-        transform.position += new Vector3(move.x, move.y);
+        var moveOffset = new Vector3(move.x, move.y);
+        transform.position += moveOffset;
+
+        if (!IsPositionValid(gridCells))
+        {
+            transform.position -= moveOffset;
+        }
+    }
+
+    private bool IsPositionValid(GridCell[,] gridCells)
+    {
+        foreach (var block in _blocks)
+        {
+            var coordinates = Vector2Int.RoundToInt(block.transform.position);
+
+            var outOfGridX = coordinates.x < 0 || coordinates.x >= gridCells.GetLength(0);
+            var outOfGridY = coordinates.y < 0;
+            if (outOfGridX || outOfGridY)
+            {
+                return false;
+            }
+            
+            if (gridCells[coordinates.x, coordinates.y].Filled)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
