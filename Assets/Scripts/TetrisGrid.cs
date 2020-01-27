@@ -16,11 +16,11 @@ public class TetrisGrid : MonoBehaviour
 
     private static readonly Vector2Int GridSize = new Vector2Int(10, 40);
 
-    private static readonly Dictionary<PlayerInput, Vector3> InputsToMove = new Dictionary<PlayerInput, Vector3>
+    private static readonly Dictionary<PlayerInput, Vector2Int> InputsToMove = new Dictionary<PlayerInput, Vector2Int>
     {
-        {PlayerInput.Down, Vector2.down},
-        {PlayerInput.Left, Vector2.left},
-        {PlayerInput.Right, Vector2.right}
+        {PlayerInput.Down, Vector2Int.down},
+        {PlayerInput.Left, Vector2Int.left},
+        {PlayerInput.Right, Vector2Int.right}
     };
 
     private void Start()
@@ -69,7 +69,7 @@ public class TetrisGrid : MonoBehaviour
         {
             if (InputsToMove.ContainsKey(playerInput))
             {
-                _currentTetromino.transform.position += InputsToMove[playerInput];
+                _currentTetromino.Move(InputsToMove[playerInput]);
             }
         }
     }
@@ -86,7 +86,7 @@ public class TetrisGrid : MonoBehaviour
 
     private void Fall()
     {
-        _currentTetromino.transform.position += Vector3.down;
+        _currentTetromino.Move(Vector2Int.down);
     }
 
     private void SpawnTetromino()

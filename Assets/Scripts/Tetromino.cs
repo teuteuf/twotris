@@ -14,4 +14,9 @@ public class Tetromino : MonoBehaviour
     {
         return _blocks;
     }
+
+    public void Move(Vector2Int move)
+    {
+        transform.position += new Vector3(move.x, move.y);
+    }
 }
