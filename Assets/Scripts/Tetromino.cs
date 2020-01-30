@@ -53,5 +53,10 @@ public class Tetromino : MonoBehaviour
     public void Rotate(float rotationDegree, GridCell[,] gridCells)
     {
         transform.RotateAround(rotationCenter.transform.position, Vector3.forward, rotationDegree);
+
+        if (!IsPositionValid(gridCells))
+        {
+            transform.RotateAround(rotationCenter.transform.position, Vector3.forward, -rotationDegree);
+        }
     }
 }
