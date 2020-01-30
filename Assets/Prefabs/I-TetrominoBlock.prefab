@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5629935556704140604}
   - component: {fileID: -7640330085304617631}
   m_Layer: 0
-  m_Name: O-TetrominoBlock
+  m_Name: I-TetrominoBlock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
