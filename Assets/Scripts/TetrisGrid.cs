@@ -46,11 +46,11 @@ public class TetrisGrid : MonoBehaviour
     private void InitGridCells()
     {
         _gridCells = new GridCell[GridSize.x, GridSize.y];
-        for (var i = 0; i < _gridCells.GetLength(0); i++)
+        for (var x = 0; x < _gridCells.GetLength(0); x++)
         {
-            for (var j = 0; j < _gridCells.GetLength(1); j++)
+            for (var y = 0; y < _gridCells.GetLength(1); y++)
             {
-                _gridCells[i, j] = new GridCell();
+                _gridCells[x, y] = new GridCell();
             }
         }
     }
@@ -96,6 +96,7 @@ public class TetrisGrid : MonoBehaviour
         if (ShouldFreezeCurrentTetromino())
         {
             FreezeCurrentTetromino();
+            ClearFullLines();
             SpawnTetromino();
         }
     }
@@ -133,6 +134,42 @@ public class TetrisGrid : MonoBehaviour
     {
         IntegrateBlocks();
         Destroy(_currentTetromino.gameObject);
+    }
+
+    private void ClearFullLines()
+    {
+        for (var y = _gridCells.GetLength(1) - 1; y >= 0; y--)
+        {
+            if (IsLineFull(y))
+            {
+                ClearLine(y);
+            }
+        }
+    }
+
+    private void ClearLine(int y)
+    {
+        for (var x = 0; x < _gridCells.GetLength(0); x++)
+        {
+            _gridCells[x, y].Clear();
+            for (var mergingY = y; mergingY < _gridCells.GetLength(1) - 1; mergingY++)
+            {
+                _gridCells[x, mergingY].MergeDown(_gridCells[x, mergingY + 1]);
+            }
+        }
+    }
+
+    private bool IsLineFull(int y)
+    {
+        for (var x = 0; x < _gridCells.GetLength(0); x++)
+        {
+            if (!_gridCells[x, y].Filled)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void IntegrateBlocks()
