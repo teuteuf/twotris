@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Spawner))]
@@ -7,22 +8,23 @@ public class TetrisGrid : MonoBehaviour
 {
     public float timeBetweenFall = 1.0f;
 
-    private float _delayBeforeFall;
+    private bool _isSoftDropping;
+    private float _timeLastFall;
     private Tetromino _currentTetromino;
     private GridCell[,] _gridCells;
 
     private Spawner _spawner;
     private Controllers _controllers;
 
+    
     private static readonly Vector2Int GridSize = new Vector2Int(10, 40);
 
     private static readonly Dictionary<PlayerInput, Vector2Int> InputsToMove = new Dictionary<PlayerInput, Vector2Int>
     {
-        {PlayerInput.SoftDrop, Vector2Int.down},
         {PlayerInput.Left, Vector2Int.left},
         {PlayerInput.Right, Vector2Int.right}
     };
-    
+
     private static readonly Dictionary<PlayerInput, float> InputsToRotate = new Dictionary<PlayerInput, float>
     {
         {PlayerInput.Clockwise, 90.0f},
@@ -34,7 +36,8 @@ public class TetrisGrid : MonoBehaviour
         _spawner = GetComponent<Spawner>();
         _controllers = GetComponent<Controllers>();
 
-        _delayBeforeFall = timeBetweenFall;
+        _timeLastFall = Time.time;
+        _isSoftDropping = false;
         InitGridCells();
 
         SpawnTetromino();
@@ -54,18 +57,9 @@ public class TetrisGrid : MonoBehaviour
 
     private void Update()
     {
-        UpdateTetrominoFreeze();
         UpdateTetrominoControl();
         UpdateTetrominoFall();
-    }
-
-    private void UpdateTetrominoFreeze()
-    {
-        if (ShouldFreezeCurrentTetromino())
-        {
-            FreezeCurrentTetromino();
-            SpawnTetromino();
-        }
+        UpdateTetrominoFreeze();
     }
 
     private void UpdateTetrominoControl()
@@ -83,15 +77,26 @@ public class TetrisGrid : MonoBehaviour
                 _currentTetromino.Rotate(InputsToRotate[playerInput], _gridCells);
             }
         }
+
+        _isSoftDropping = playerInputs.Contains(PlayerInput.SoftDrop);
     }
 
     private void UpdateTetrominoFall()
     {
-        _delayBeforeFall -= Time.deltaTime;
-        if (_delayBeforeFall <= 0.0f)
+        var fallSpeedFactor = _isSoftDropping ? 20.0f : 1.0f;
+        if (Time.time - _timeLastFall > timeBetweenFall / fallSpeedFactor)
         {
             Fall();
-            _delayBeforeFall += timeBetweenFall;
+            _timeLastFall = Time.time;
+        }
+    }
+
+    private void UpdateTetrominoFreeze()
+    {
+        if (ShouldFreezeCurrentTetromino())
+        {
+            FreezeCurrentTetromino();
+            SpawnTetromino();
         }
     }
 
