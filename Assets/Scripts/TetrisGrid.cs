@@ -109,6 +109,7 @@ public class TetrisGrid : MonoBehaviour
     private void SpawnTetromino()
     {
         _currentTetromino = _spawner.Spawn();
+        _controllers.SwitchPlayer();
     }
 
     private bool ShouldFreezeCurrentTetromino()

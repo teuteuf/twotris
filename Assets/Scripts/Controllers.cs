@@ -75,4 +75,9 @@ public class Controllers : MonoBehaviour
         
         return isHoldingKey && holdKeyForLongEnough && delayLastMoveElapsed;
     }
+
+    public void SwitchPlayer()
+    {
+        _currentGamePadIndex = (_currentGamePadIndex + 1) % Gamepad.all.Count;
+    }
 }
