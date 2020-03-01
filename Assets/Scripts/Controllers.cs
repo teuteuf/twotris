@@ -8,6 +8,8 @@ public class Controllers : MonoBehaviour
 {
     public float delayStartAutoRepeat = 0.3f;
     public float delayMoveAutoRepeat = 0.05f;
+
+    public TextMesh activePlayerText;
     
     private static readonly Dictionary<PlayerInput, GamepadButton> AutoRepeatableInputs = new Dictionary<PlayerInput, GamepadButton>
     {
@@ -34,6 +36,7 @@ public class Controllers : MonoBehaviour
     private void Start()
     {
         _currentGamePadIndex = 0;
+        UpdateActivePlayerText();
     }
 
     public List<PlayerInput> GetInputs()
@@ -79,5 +82,11 @@ public class Controllers : MonoBehaviour
     public void SwitchPlayer()
     {
         _currentGamePadIndex = (_currentGamePadIndex + 1) % Gamepad.all.Count;
+        UpdateActivePlayerText();
+    }
+
+    private void UpdateActivePlayerText()
+    {
+        activePlayerText.text = (_currentGamePadIndex + 1).ToString();
     }
 }
