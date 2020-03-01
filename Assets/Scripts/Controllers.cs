@@ -1,15 +1,18 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.InputSystem.Utilities;
 
 public class Controllers : MonoBehaviour
 {
     public float delayStartAutoRepeat = 0.3f;
     public float delayMoveAutoRepeat = 0.05f;
     
-    private static readonly Dictionary<PlayerInput, KeyCode> AutoRepeatableInputs = new Dictionary<PlayerInput, KeyCode>
+    private static readonly Dictionary<PlayerInput, GamepadButton> AutoRepeatableInputs = new Dictionary<PlayerInput, GamepadButton>
     {
-        {PlayerInput.Left, KeyCode.LeftArrow},
-        {PlayerInput.Right, KeyCode.RightArrow}
+        {PlayerInput.Left, GamepadButton.DpadLeft},
+        {PlayerInput.Right, GamepadButton.DpadRight}
     };
     
     private readonly Dictionary<PlayerInput, float> _holdingStart = new Dictionary<PlayerInput, float>
@@ -24,22 +27,31 @@ public class Controllers : MonoBehaviour
         {PlayerInput.Right, 0.0f}
     };
 
+    private int _currentGamePadIndex;
+    
+    private Gamepad CurrentGamePad => Gamepad.all[_currentGamePadIndex];
+
+    private void Start()
+    {
+        _currentGamePadIndex = 0;
+    }
+
     public List<PlayerInput> GetInputs()
     {
         var inputs = new List<PlayerInput>();
-        if (Input.GetKey(KeyCode.DownArrow))
+        if (CurrentGamePad.dpad.down.isPressed)
         {
             inputs.Add(PlayerInput.SoftDrop);
         }
-
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        
+        if (CurrentGamePad.crossButton.wasPressedThisFrame)
         {
             inputs.Add(PlayerInput.Clockwise);
         }
 
         foreach (var autoRepeatableInput in AutoRepeatableInputs)
         {
-            if (Input.GetKeyDown(autoRepeatableInput.Value))
+            if (CurrentGamePad[autoRepeatableInput.Value].wasPressedThisFrame)
             {
                 inputs.Add(autoRepeatableInput.Key);
                 _holdingStart[autoRepeatableInput.Key] = Time.time;
@@ -55,9 +67,9 @@ public class Controllers : MonoBehaviour
         return inputs;
     }
 
-    private bool IsAutoRepeatActive(KeyCode key, PlayerInput playerInput)
+    private bool IsAutoRepeatActive(GamepadButton button, PlayerInput playerInput)
     {
-        var isHoldingKey = Input.GetKey(key);
+        var isHoldingKey = CurrentGamePad[button].isPressed;
         var holdKeyForLongEnough = Time.time - _holdingStart[playerInput] > delayStartAutoRepeat;
         var delayLastMoveElapsed = Time.time - _lastMove[playerInput] > delayMoveAutoRepeat;
         
