@@ -1,8 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.LowLevel;
-using UnityEngine.InputSystem.Utilities;
 
 public class Controllers : MonoBehaviour
 {
@@ -10,11 +7,12 @@ public class Controllers : MonoBehaviour
     public float delayMoveAutoRepeat = 0.05f;
 
     public TextMesh activePlayerText;
+    public List<AbstractController> activeControllers;
     
-    private static readonly Dictionary<PlayerInput, GamepadButton> AutoRepeatableInputs = new Dictionary<PlayerInput, GamepadButton>
+    private static readonly List<PlayerInput> AutoRepeatableInputs = new List<PlayerInput>
     {
-        {PlayerInput.Left, GamepadButton.DpadLeft},
-        {PlayerInput.Right, GamepadButton.DpadRight}
+        PlayerInput.Left,
+        PlayerInput.Right
     };
     
     private readonly Dictionary<PlayerInput, float> _holdingStart = new Dictionary<PlayerInput, float>
@@ -29,50 +27,50 @@ public class Controllers : MonoBehaviour
         {PlayerInput.Right, 0.0f}
     };
 
-    private int _currentGamePadIndex;
+    private int _currentControllerIndex;
     
-    private Gamepad CurrentGamePad => Gamepad.all[_currentGamePadIndex];
+    private AbstractController CurrentController => activeControllers[_currentControllerIndex];
 
     private void Start()
     {
-        _currentGamePadIndex = 0;
+        _currentControllerIndex = 0;
         UpdateActivePlayerText();
     }
 
     public List<PlayerInput> GetInputs()
     {
         var inputs = new List<PlayerInput>();
-        if (CurrentGamePad.dpad.down.isPressed)
+        if (CurrentController.IsPressed(PlayerInput.SoftDrop))
         {
             inputs.Add(PlayerInput.SoftDrop);
         }
         
-        if (CurrentGamePad.crossButton.wasPressedThisFrame)
+        if (CurrentController.WasPressedThisFrame(PlayerInput.Clockwise))
         {
             inputs.Add(PlayerInput.Clockwise);
         }
 
         foreach (var autoRepeatableInput in AutoRepeatableInputs)
         {
-            if (CurrentGamePad[autoRepeatableInput.Value].wasPressedThisFrame)
+            if (CurrentController.WasPressedThisFrame(autoRepeatableInput))
             {
-                inputs.Add(autoRepeatableInput.Key);
-                _holdingStart[autoRepeatableInput.Key] = Time.time;
-                _lastMove[autoRepeatableInput.Key] = Time.time;
+                inputs.Add(autoRepeatableInput);
+                _holdingStart[autoRepeatableInput] = Time.time;
+                _lastMove[autoRepeatableInput] = Time.time;
             }
-            if (IsAutoRepeatActive(autoRepeatableInput.Value, autoRepeatableInput.Key))
+            if (IsAutoRepeatActive(autoRepeatableInput))
             {
-                inputs.Add(autoRepeatableInput.Key);
-                _lastMove[autoRepeatableInput.Key] = Time.time;
+                inputs.Add(autoRepeatableInput);
+                _lastMove[autoRepeatableInput] = Time.time;
             }
         }
 
         return inputs;
     }
 
-    private bool IsAutoRepeatActive(GamepadButton button, PlayerInput playerInput)
+    private bool IsAutoRepeatActive(PlayerInput playerInput)
     {
-        var isHoldingKey = CurrentGamePad[button].isPressed;
+        var isHoldingKey =CurrentController.IsPressed(playerInput);
         var holdKeyForLongEnough = Time.time - _holdingStart[playerInput] > delayStartAutoRepeat;
         var delayLastMoveElapsed = Time.time - _lastMove[playerInput] > delayMoveAutoRepeat;
         
@@ -81,12 +79,12 @@ public class Controllers : MonoBehaviour
 
     public void SwitchPlayer()
     {
-        _currentGamePadIndex = (_currentGamePadIndex + 1) % Gamepad.all.Count;
+        _currentControllerIndex = (_currentControllerIndex + 1) % activeControllers.Count;
         UpdateActivePlayerText();
     }
 
     private void UpdateActivePlayerText()
     {
-        activePlayerText.text = (_currentGamePadIndex + 1).ToString();
+        activePlayerText.text = (_currentControllerIndex + 1).ToString();
     }
 }
