@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Spawner))]
 [RequireComponent(typeof(Controllers))]
 public class TetrisGrid : MonoBehaviour
 {
-    public float timeBetweenFall = 1.0f;
+    [SerializeField]
+    private float timeBetweenFall = 1.0f;
 
     private bool _isSoftDropping;
     private float _timeLastFall;
@@ -59,7 +59,7 @@ public class TetrisGrid : MonoBehaviour
     {
         UpdateTetrominoControl();
         UpdateTetrominoFall();
-        UpdateTetrominoFreeze();
+        UpdateTetrominoLock();
     }
 
     private void UpdateTetrominoControl()
@@ -91,11 +91,11 @@ public class TetrisGrid : MonoBehaviour
         }
     }
 
-    private void UpdateTetrominoFreeze()
+    private void UpdateTetrominoLock()
     {
-        if (ShouldFreezeCurrentTetromino())
+        if (_currentTetromino.ShouldLock(_gridCells))
         {
-            FreezeCurrentTetromino();
+            LockCurrentTetromino();
             ClearFullLines();
             SpawnTetromino();
         }
@@ -112,26 +112,7 @@ public class TetrisGrid : MonoBehaviour
         _controllers.SwitchPlayer();
     }
 
-    private bool ShouldFreezeCurrentTetromino()
-    {
-        foreach (var block in _currentTetromino.GetBlocks())
-        {
-            var blockPosition = Vector2Int.FloorToInt(block.transform.position);
-            if (blockPosition.y == 0)
-            {
-                return true;
-            }
-
-            if (_gridCells[blockPosition.x, blockPosition.y - 1].Filled)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private void FreezeCurrentTetromino()
+    private void LockCurrentTetromino()
     {
         IntegrateBlocks();
         Destroy(_currentTetromino.gameObject);
