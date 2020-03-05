@@ -7,6 +7,7 @@ public class KeyboardController : AbstractController
     {
         {PlayerInput.SoftDrop, Key.DownArrow},
         {PlayerInput.Clockwise, Key.UpArrow},
+        {PlayerInput.Counterclockwise, Key.LeftCtrl},
         {PlayerInput.Left, Key.LeftArrow},
         {PlayerInput.Right, Key.RightArrow},
     };

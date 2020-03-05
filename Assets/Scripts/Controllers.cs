@@ -15,39 +15,56 @@ public class Controllers : MonoBehaviour
         PlayerInput.Right
     };
     
-    private readonly Dictionary<PlayerInput, float> _holdingStart = new Dictionary<PlayerInput, float>
+    private static readonly List<PlayerInput> SimpleInputs = new List<PlayerInput>
     {
-        {PlayerInput.Left, 0.0f},
-        {PlayerInput.Right, 0.0f}
+        PlayerInput.Clockwise,
+        PlayerInput.Counterclockwise
     };
     
-    private readonly Dictionary<PlayerInput, float> _lastMove = new Dictionary<PlayerInput, float>
+    private static readonly List<PlayerInput> HoldingInputs = new List<PlayerInput>
     {
-        {PlayerInput.Left, 0.0f},
-        {PlayerInput.Right, 0.0f}
+        PlayerInput.SoftDrop
     };
-
+    
     private int _currentControllerIndex;
+    private Dictionary<PlayerInput, float> _holdingStart;
+    private Dictionary<PlayerInput, float> _lastMove;
     
     private AbstractController CurrentController => activeControllers[_currentControllerIndex];
 
     private void Start()
     {
         _currentControllerIndex = 0;
+        
+        _holdingStart = new Dictionary<PlayerInput, float>();
+        _lastMove = new Dictionary<PlayerInput, float>();
+        foreach (var autoRepeatableInput in AutoRepeatableInputs)
+        {
+            _holdingStart.Add(autoRepeatableInput, 0.0f);
+            _lastMove.Add(autoRepeatableInput, 0.0f);
+        }
+        
         UpdateActivePlayerText();
     }
 
     public List<PlayerInput> GetInputs()
     {
         var inputs = new List<PlayerInput>();
-        if (CurrentController.IsPressed(PlayerInput.SoftDrop))
+
+        foreach (var holdingInput in HoldingInputs)
         {
-            inputs.Add(PlayerInput.SoftDrop);
+            if (CurrentController.IsPressed(holdingInput))
+            {
+                inputs.Add(holdingInput);
+            }
         }
-        
-        if (CurrentController.WasPressedThisFrame(PlayerInput.Clockwise))
+
+        foreach (var simpleInput in SimpleInputs)
         {
-            inputs.Add(PlayerInput.Clockwise);
+            if (CurrentController.WasPressedThisFrame(simpleInput))
+            {
+                inputs.Add(simpleInput);
+            }
         }
 
         foreach (var autoRepeatableInput in AutoRepeatableInputs)

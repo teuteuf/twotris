@@ -10,6 +10,7 @@ public class GamePadController : AbstractController
     {
         {PlayerInput.SoftDrop, GamepadButton.DpadDown},
         {PlayerInput.Clockwise, GamepadButton.Cross},
+        {PlayerInput.Clockwise, GamepadButton.Circle},
         {PlayerInput.Left, GamepadButton.DpadLeft},
         {PlayerInput.Right, GamepadButton.DpadRight},
     };
