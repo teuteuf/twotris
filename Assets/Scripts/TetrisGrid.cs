@@ -3,11 +3,9 @@ using UnityEngine;
 
 [RequireComponent(typeof(Spawner))]
 [RequireComponent(typeof(Controllers))]
+[RequireComponent(typeof(LevelManager))]
 public class TetrisGrid : MonoBehaviour
 {
-    [SerializeField]
-    private float timeBetweenFall = 1.0f;
-
     private bool _isSoftDropping;
     private float _timeLastFall;
     private Tetromino _currentTetromino;
@@ -15,6 +13,7 @@ public class TetrisGrid : MonoBehaviour
 
     private Spawner _spawner;
     private Controllers _controllers;
+    private LevelManager _levelManager;
 
     
     private static readonly Vector2Int GridSize = new Vector2Int(10, 40);
@@ -35,6 +34,7 @@ public class TetrisGrid : MonoBehaviour
     {
         _spawner = GetComponent<Spawner>();
         _controllers = GetComponent<Controllers>();
+        _levelManager = GetComponent<LevelManager>();
 
         _timeLastFall = Time.time;
         _isSoftDropping = false;
@@ -84,7 +84,7 @@ public class TetrisGrid : MonoBehaviour
     private void UpdateTetrominoFall()
     {
         var fallSpeedFactor = _isSoftDropping ? 20.0f : 1.0f;
-        if (Time.time - _timeLastFall > timeBetweenFall / fallSpeedFactor)
+        if (Time.time - _timeLastFall > _levelManager.TimeBetweenFall / fallSpeedFactor)
         {
             Fall();
             _timeLastFall = Time.time;
@@ -139,6 +139,7 @@ public class TetrisGrid : MonoBehaviour
                 _gridCells[x, mergingY].MergeDown(_gridCells[x, mergingY + 1]);
             }
         }
+        _levelManager.AddLineCleared();
     }
 
     private bool IsLineFull(int y)

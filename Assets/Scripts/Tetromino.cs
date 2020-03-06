@@ -20,11 +20,6 @@ public class Tetromino : MonoBehaviour
         _blocks = GetComponentsInChildren<Block>();
     }
 
-    private void Update()
-    {
-        Debug.Log(_nbLandedMoves);
-    }
-
     public IEnumerable<Block> GetBlocks()
     {
         return _blocks;
