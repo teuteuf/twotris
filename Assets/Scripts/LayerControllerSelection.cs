@@ -4,14 +4,11 @@ using UnityEngine.UI;
 
 public class LayerControllerSelection : MonoBehaviour
 {
-    [SerializeField]
-    private Text activeControllers;
-
-    [SerializeField]
-    private Controllers controllers;
-
-    [SerializeField]
-    private TetrisGrid tetrisGrid;
+    [SerializeField] private Text activeControllers;
+    [SerializeField] private LayerGame layerGame;
+    
+    [SerializeField] private Controllers controllers;
+    [SerializeField] private TetrisGrid tetrisGrid;
 
     private void Update()
     {
@@ -25,6 +22,7 @@ public class LayerControllerSelection : MonoBehaviour
         if (tetrisGrid.isActiveAndEnabled)
         {
             gameObject.SetActive(false);
+            layerGame.gameObject.SetActive(true);
         }
     }
 }
