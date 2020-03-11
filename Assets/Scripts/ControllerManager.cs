@@ -46,7 +46,8 @@ public class ControllerManager : MonoBehaviour
                 if (notActive)
                 {
                     _activeGamepadIndex.Add(gamepadIndex);
-                    var gamepadController = new GameObject("GamepadController_1").AddComponent<GamePadController>();
+                    var gamepadController = new GameObject("GamepadController_" + gamepadIndex)
+                        .AddComponent<GamePadController>();
                     gamepadController.gamepadIndex = gamepadIndex;
                     AddController(gamepadController);
                 }
