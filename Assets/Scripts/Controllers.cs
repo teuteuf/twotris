@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Controllers : MonoBehaviour
@@ -103,5 +104,10 @@ public class Controllers : MonoBehaviour
     private void UpdateActivePlayerText()
     {
         activePlayerText.text = (_currentControllerIndex + 1).ToString();
+    }
+
+    public bool HasAnyKeyOrButtonPressedThisFrame()
+    {
+        return activeControllers.Any(controller => controller.HasAnyKeyPressed());
     }
 }

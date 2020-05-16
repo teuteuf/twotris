@@ -15,6 +15,8 @@ public class TetrisGrid : MonoBehaviour
     private Controllers _controllers;
     private LevelManager _levelManager;
 
+    [SerializeField] private LayerGame layerGame;
+    [SerializeField] private LayerGameOver layerGameOver;
     
     private static readonly Vector2Int GridSize = new Vector2Int(10, 40);
 
@@ -109,6 +111,13 @@ public class TetrisGrid : MonoBehaviour
     private void SpawnTetromino()
     {
         _currentTetromino = _spawner.Spawn();
+        if (!_currentTetromino.IsPositionValid(_gridCells))
+        {
+            layerGame.gameObject.SetActive(false);
+            gameObject.SetActive(false);
+            layerGameOver.DisplayGameOver(_levelManager.NbLinesCleared);
+        }
+        
         _controllers.SwitchPlayer();
     }
 

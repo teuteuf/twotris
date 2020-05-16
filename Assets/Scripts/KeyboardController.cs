@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.InputSystem;
 
 public class KeyboardController : AbstractController
@@ -20,6 +21,11 @@ public class KeyboardController : AbstractController
     public override bool IsPressed(PlayerInput playerInput)
     {
         return Keyboard.current[InputsToKeys[playerInput]].isPressed;
+    }
+
+    public override bool HasAnyKeyPressed()
+    {
+        return InputsToKeys.Values.Any(button => Keyboard.current[button].wasPressedThisFrame);
     }
 
     public override string ToString()

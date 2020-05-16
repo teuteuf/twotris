@@ -14,7 +14,7 @@ public class Tetromino : MonoBehaviour
     private float _landingTime;
     private int _nbLandedMoves;
 
-    private void Start()
+    private void Awake()
     {
         _blocks = GetComponentsInChildren<Block>();
     }
@@ -40,7 +40,7 @@ public class Tetromino : MonoBehaviour
         }
     }
 
-    private bool IsPositionValid(GridCell[,] gridCells)
+    public bool IsPositionValid(GridCell[,] gridCells)
     {
         foreach (var block in _blocks)
         {
